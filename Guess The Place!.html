@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guess the Place!</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Nunito',sans-serif;
+    background:linear-gradient(to bottom,#dff4ff,#f7fbff);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+    color:#333;
+}
+
+.game-container{
+    width:100%;
+    max-width:1150px;
+    background:white;
+    border-radius:30px;
+    padding:25px;
+    box-shadow:0 15px 40px rgba(0,0,0,0.08);
+}
+
+/* HEADER */
+
+.header{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+.header h1{
+    font-size:3rem;
+    color:#3a86ff;
+    font-weight:800;
+}
+
+.header p{
+    color:#666;
+    font-size:1.1rem;
+}
+
+/* TOP SECTION */
+
+.top-section{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:20px;
+}
+
+@media(max-width:900px){
+    .top-section{
+        grid-template-columns:1fr;
+    }
+}
+
+/* LANDSCAPE */
+
+.landscape{
+    position:relative;
+    height:360px;
+    border-radius:28px;
+    overflow:hidden;
+    background:
+    linear-gradient(to bottom,
+    #87d7ff 0%,
+    #dff6ff 65%,
+    #c9f08f 65%,
+    #9ad66f 100%);
+}
+
+/* SUN */
+
+.sun{
+    position:absolute;
+    width:95px;
+    height:95px;
+    border-radius:50%;
+    background:#ffd93d;
+    top:25px;
+    right:55px;
+    box-shadow:0 0 35px rgba(255,217,61,0.8);
+    transition:0.6s;
+}
+
+/* CLOUDS */
+
+.cloud{
+    position:absolute;
+    background:white;
+    border-radius:50px;
+    width:100px;
+    height:50px;
+    transition:0.6s;
+}
+
+.cloud::before,
+.cloud::after{
+    content:'';
+    position:absolute;
+    background:white;
+    border-radius:50%;
+}
+
+.cloud::before{
+    width:50px;
+    height:50px;
+    top:-20px;
+    left:10px;
+}
+
+.cloud::after{
+    width:60px;
+    height:60px;
+    top:-25px;
+    right:10px;
+}
+
+.cloud1{
+    top:60px;
+    left:70px;
+}
+
+.cloud2{
+    top:120px;
+    left:260px;
+}
+
+/* BIRDS */
+
+.bird{
+    position:absolute;
+    font-size:2rem;
+    top:60px;
+    left:420px;
+    transition:0.6s;
+}
+
+/* BUILDINGS */
+
+.building{
+    position:absolute;
+    bottom:80px;
+    width:110px;
+    height:150px;
+    border-radius:18px 18px 0 0;
+    transition:0.6s;
+}
+
+.building::before{
+    content:'';
+    position:absolute;
+    width:18px;
+    height:18px;
+    background:white;
+    top:20px;
+    left:20px;
+    box-shadow:
+    35px 0 white,
+    0 35px white,
+    35px 35px white,
+    0 70px white,
+    35px 70px white;
+}
+
+.building1{
+    left:100px;
+    background:#ffb5a7;
+}
+
+.building2{
+    left:260px;
+    background:#8ec5ff;
+}
+
+/* TREE */
+
+.tree{
+    position:absolute;
+    bottom:75px;
+    right:180px;
+    transition:0.6s;
+}
+
+.tree-top{
+    width:90px;
+    height:90px;
+    border-radius:50%;
+    background:#58cc77;
+}
+
+.tree-trunk{
+    width:18px;
+    height:75px;
+    background:#7b4b2a;
+    margin:auto;
+}
+
+/* FLOWER */
+
+.flower{
+    position:absolute;
+    bottom:50px;
+    right:70px;
+    transition:0.6s;
+}
+
+.flower-head{
+    width:28px;
+    height:28px;
+    border-radius:50%;
+    background:#ff6bc5;
+}
+
+.flower-stem{
+    width:5px;
+    height:55px;
+    background:green;
+    margin:auto;
+}
+
+/* ROAD */
+
+.road{
+    position:absolute;
+    bottom:0;
+    width:100%;
+    height:75px;
+    background:#4e5d6c;
+}
+
+.road::before{
+    content:'';
+    position:absolute;
+    top:33px;
+    left:0;
+    width:100%;
+    height:6px;
+    background:
+    repeating-linear-gradient(
+    to right,
+    white 0px,
+    white 40px,
+    transparent 40px,
+    transparent 70px
+    );
+}
+
+/* DISAPPEAR */
+
+.hidden{
+    opacity:0;
+    transform:translateY(-20px) scale(0.7);
+}
+
+/* SIDEBAR */
+
+.sidebar{
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+}
+
+.card{
+    background:#f8fbff;
+    border-radius:22px;
+    padding:20px;
+}
+
+.card h3{
+    color:#3a86ff;
+    margin-bottom:15px;
+}
+
+.stats{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    font-size:1.05rem;
+}
+
+/* WORD */
+
+.word-display{
+    margin:35px 0;
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:12px;
+}
+
+.letter-box{
+    width:48px;
+    height:58px;
+    border-bottom:4px solid #3a86ff;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:2rem;
+    font-weight:800;
+    color:#333;
+    animation:pop 0.2s ease;
+}
+
+@keyframes pop{
+    from{
+        transform:scale(0.8);
+    }
+    to{
+        transform:scale(1);
+    }
+}
+
+/* KEYBOARD */
+
+.keyboard{
+    display:grid;
+    grid-template-columns:repeat(13,1fr);
+    gap:10px;
+}
+
+@media(max-width:700px){
+    .keyboard{
+        grid-template-columns:repeat(6,1fr);
+    }
+}
+
+.key{
+    border:none;
+    padding:14px;
+    border-radius:16px;
+    font-size:1rem;
+    font-weight:800;
+    cursor:pointer;
+    background:#58cc77;
+    color:white;
+    transition:0.2s;
+}
+
+.key:hover{
+    transform:translateY(-2px);
+}
+
+.key.correct{
+    background:#3a86ff;
+}
+
+.key.wrong{
+    background:#ff6b6b;
+}
+
+.key.used{
+    cursor:not-allowed;
+}
+
+/* CONTROLS */
+
+.controls{
+    margin-top:28px;
+    display:flex;
+    justify-content:center;
+    gap:15px;
+    flex-wrap:wrap;
+}
+
+.control-btn{
+    border:none;
+    padding:14px 24px;
+    border-radius:16px;
+    font-weight:800;
+    font-size:1rem;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.control-btn:hover{
+    transform:scale(1.05);
+}
+
+.new{
+    background:#3a86ff;
+    color:white;
+}
+
+.hint{
+    background:#ffd166;
+}
+
+.restart{
+    background:#58cc77;
+    color:white;
+}
+
+/* MESSAGE */
+
+.message{
+    margin-top:25px;
+    text-align:center;
+    font-size:1.5rem;
+    font-weight:800;
+    min-height:50px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="game-container">
+
+    <div class="header">
+        <h1>Guess the Place!</h1>
+        <p>Places in a Town – A1/A2 English</p>
+    </div>
+
+    <div class="top-section">
+
+        <!-- LANDSCAPE -->
+        <div class="landscape">
+
+            <div class="sun scene-item"></div>
+
+            <div class="cloud cloud1 scene-item"></div>
+            <div class="cloud cloud2 scene-item"></div>
+
+            <div class="bird scene-item">🕊️</div>
+
+            <div class="building building1 scene-item"></div>
+            <div class="building building2 scene-item"></div>
+
+            <div class="tree scene-item">
+                <div class="tree-top"></div>
+                <div class="tree-trunk"></div>
+            </div>
+
+            <div class="flower scene-item">
+                <div class="flower-head"></div>
+                <div class="flower-stem"></div>
+            </div>
+
+            <div class="road"></div>
+
+        </div>
+
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+
+            <div class="card">
+                <h3>Score</h3>
+
+                <div class="stats">
+                    <div>✅ Correct Words: <span id="score">0</span></div>
+                    <div>❌ Mistakes Left: <span id="mistakes">5</span></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>How to Play</h3>
+
+                <div class="stats">
+                    <div>🔤 Guess the letters</div>
+                    <div>🏙️ Save the town landscape</div>
+                    <div>🌈 5 opportunities only</div>
+                    <div>🎯 Complete the word to win</div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- WORD -->
+    <div class="word-display" id="wordDisplay"></div>
+
+    <!-- KEYBOARD -->
+    <div class="keyboard" id="keyboard"></div>
+
+    <!-- CONTROLS -->
+    <div class="controls">
+        <button class="control-btn new" onclick="newGame()">New Word</button>
+        <button class="control-btn hint" onclick="showHint()">Hint</button>
+        <button class="control-btn restart" onclick="restartGame()">Restart</button>
+    </div>
+
+    <!-- MESSAGE -->
+    <div class="message" id="message"></div>
+
+</div>
+
+<script>
+
+const words = [
+    {word:"hospital", hint:"Doctors work here"},
+    {word:"bank", hint:"People keep money here"},
+    {word:"cinema", hint:"You watch movies here"},
+    {word:"supermarket", hint:"You buy food here"},
+    {word:"school", hint:"Students study here"},
+    {word:"restaurant", hint:"People eat here"},
+    {word:"library", hint:"You borrow books here"},
+    {word:"park", hint:"Children play here"},
+    {word:"zoo", hint:"Animals live here"},
+    {word:"airport", hint:"Planes arrive here"}
+];
+
+let selectedWord = "";
+let guessedLetters = [];
+let mistakes = 0;
+const maxMistakes = 5;
+let score = 0;
+
+const wordDisplay = document.getElementById("wordDisplay");
+const keyboard = document.getElementById("keyboard");
+const message = document.getElementById("message");
+const mistakesDisplay = document.getElementById("mistakes");
+const scoreDisplay = document.getElementById("score");
+
+const sceneItems = document.querySelectorAll(".scene-item");
+
+/* CREATE KEYBOARD */
+
+function createKeyboard(){
+
+    keyboard.innerHTML = "";
+
+    for(let i=65;i<=90;i++){
+
+        const letter = String.fromCharCode(i);
+
+        const btn = document.createElement("button");
+
+        btn.innerText = letter;
+
+        btn.classList.add("key");
+
+        btn.onclick = () => guessLetter(letter, btn);
+
+        keyboard.appendChild(btn);
+    }
+}
+
+/* NEW GAME */
+
+function newGame(){
+
+    guessedLetters = [];
+    mistakes = 0;
+
+    mistakesDisplay.innerText = maxMistakes;
+
+    message.innerHTML = "";
+
+    sceneItems.forEach(item=>{
+        item.classList.remove("hidden");
+    });
+
+    const randomWord = words[Math.floor(Math.random()*words.length)];
+
+    selectedWord = randomWord.word;
+
+    createKeyboard();
+
+    updateWordDisplay();
+}
+
+/* DISPLAY WORD */
+
+function updateWordDisplay(){
+
+    wordDisplay.innerHTML = "";
+
+    selectedWord.split("").forEach(letter=>{
+
+        const box = document.createElement("div");
+
+        box.classList.add("letter-box");
+
+        if(guessedLetters.includes(letter)){
+            box.innerText = letter.toUpperCase();
+        }
+
+        wordDisplay.appendChild(box);
+
+    });
+
+    checkWin();
+}
+
+/* GUESS LETTER */
+
+function guessLetter(letter, button){
+
+    button.disabled = true;
+    button.classList.add("used");
+
+    if(selectedWord.includes(letter.toLowerCase())){
+
+        guessedLetters.push(letter.toLowerCase());
+
+        button.classList.add("correct");
+
+        updateWordDisplay();
+
+    }else{
+
+        mistakes++;
+
+        button.classList.add("wrong");
+
+        mistakesDisplay.innerText = maxMistakes - mistakes;
+
+        removeLandscapeItem();
+
+        checkLose();
+    }
+}
+
+/* REMOVE LANDSCAPE ITEM */
+
+function removeLandscapeItem(){
+
+    const visibleItems = [...sceneItems].filter(
+        item => !item.classList.contains("hidden")
+    );
+
+    if(visibleItems.length > 0){
+
+        visibleItems[visibleItems.length - 1]
+        .classList.add("hidden");
+    }
+}
+
+/* CHECK WIN */
+
+function checkWin(){
+
+    const won = selectedWord
+    .split("")
+    .every(letter => guessedLetters.includes(letter));
+
+    if(won){
+
+        score++;
+
+        scoreDisplay.innerText = score;
+
+        message.innerHTML =
+        "🎉 Amazing! You found: <b>" +
+        selectedWord.toUpperCase() +
+        "</b>";
+
+        disableKeyboard();
+    }
+}
+
+/* CHECK LOSE */
+
+function checkLose(){
+
+    if(mistakes >= maxMistakes){
+
+        message.innerHTML =
+        "🌧️ The town became empty.<br>The word was: <b>" +
+        selectedWord.toUpperCase() +
+        "</b>";
+
+        disableKeyboard();
+    }
+}
+
+/* DISABLE KEYS */
+
+function disableKeyboard(){
+
+    document.querySelectorAll(".key").forEach(btn=>{
+        btn.disabled = true;
+    });
+}
+
+/* HINT */
+
+function showHint(){
+
+    const current = words.find(
+        w => w.word === selectedWord
+    );
+
+    alert("💡 Hint: " + current.hint);
+}
+
+/* RESTART */
+
+function restartGame(){
+
+    score = 0;
+
+    scoreDisplay.innerText = 0;
+
+    newGame();
+}
+
+/* START */
+
+newGame();
+
+</script>
+
+</body>
+</html>
